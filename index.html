@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0b1220">
+<title>上课抽签点名</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <header id="topbar">
+    <div class="brand">🎲 <b>上课抽签点名</b></div>
+    <div class="cls-info"><span id="clsName">一班</span><span class="cls-count" id="clsCount">0 人</span></div>
+    <div class="top-actions">
+      <button class="tb-btn" id="btnRoster" title="名单管理">📋 名单</button>
+      <button class="tb-btn" id="btnLogs" title="点名记录">📜 记录</button>
+      <button class="tb-btn" id="btnSettings" title="设置">⚙️ 设置</button>
+    </div>
+  </header>
+
+  <main id="stage">
+
+    <div id="stageScroll">
+      <div id="bigNames"></div>
+      <div id="hintText">按 <b>空格键</b> 或点击下方按钮开始抽签</div>
+      <div id="resultSub" hidden></div>
+    </div>
+
+    <div id="stageWheel" hidden>
+      <canvas id="wheelCv"></canvas>
+      <div id="wheelArrow">▼</div>
+      <div id="wheelResult" hidden></div>
+    </div>
+
+  </main>
+
+  <footer id="botbar">
+    <div class="status-line"><span id="statusBar">候选 0 人</span></div>
+    <div class="btn-row">
+      <button class="btn-start" id="btnStart">🎲 开始抽签</button>
+      <button class="btn-ghost" id="btnReset">↺ 重置本轮</button>
+    </div>
+  </footer>
+
+</div>
+
+<!-- 名单管理 -->
+<div class="mask" id="maskRoster" hidden>
+  <div class="dialog">
+    <div class="dlg-head"><h3>📋 名单管理</h3><button class="x" data-close>✕</button></div>
+    <div class="dlg-body">
+      <div class="field-label">班级</div>
+      <div class="cls-chips" id="clsChips"></div>
+      <div class="field-label">学生名单（每行一个名字，保存时自动去重）</div>
+      <textarea id="rosterText" spellcheck="false" placeholder="张三&#10;李四&#10;王五&#10;……"></textarea>
+      <div class="btn-grid">
+        <button class="btn-sm primary" id="btnSaveRoster">💾 保存名单</button>
+        <button class="btn-sm" id="btnSample">✨ 导入示例</button>
+        <button class="btn-sm" id="btnExportTxt">⬇ 导出 txt</button>
+        <button class="btn-sm danger" id="btnClearRoster">🗑 清空名单</button>
+      </div>
+      <div class="tip" id="rosterTip">提示：可直接把 Excel 名单复制后粘贴进来，每行一个名字。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 点名记录 -->
+<div class="mask" id="maskLogs" hidden>
+  <div class="dialog">
+    <div class="dlg-head"><h3>📜 点名记录</h3><button class="x" data-close>✕</button></div>
+    <div class="dlg-body">
+      <div class="field-label">本次课堂已抽</div>
+      <div class="chips" id="todayList"><span class="empty">还没有抽签记录</span></div>
+      <div class="row-between"><span class="field-label">全部历史</span><button class="btn-sm danger" id="btnClearLogs">清空全部</button></div>
+      <div class="log-list" id="logList"><div class="empty">暂无历史记录</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 设置 -->
+<div class="mask" id="maskSettings" hidden>
+  <div class="dialog">
+    <div class="dlg-head"><h3>⚙️ 设置</h3><button class="x" data-close>✕</button></div>
+    <div class="dlg-body">
+      <div class="field-label">抽签模式</div>
+      <div class="seg" id="segMode">
+        <button data-mode="scroll">🎰 滚动抽签</button>
+        <button data-mode="wheel">🎡 转盘抽签</button>
+      </div>
+      <div class="toggle-row"><span>每次抽取人数</span>
+        <div class="stepper">
+          <button id="cntMinus" title="减少">−</button><span id="cntVal">1</span><button id="cntPlus" title="增加">+</button>
+        </div>
+      </div>
+      <div class="toggle-row"><span>本轮不重复（抽过的名字不再抽）</span><label class="switch"><input type="checkbox" id="swNoRepeat" checked><span class="slider"></span></label></div>
+      <div class="toggle-row"><span>抽签音效</span><label class="switch"><input type="checkbox" id="swSound" checked><span class="slider"></span></label></div>
+      <div class="field-label">数据备份</div>
+      <div class="btn-grid">
+        <button class="btn-sm" id="btnExportJson">⬇ 导出数据</button>
+        <button class="btn-sm" id="btnImportJson">⬆ 导入数据</button>
+      </div>
+      <input type="file" id="importFile" accept=".json,application/json" hidden>
+      <div class="tip">导出文件包含全部班级与记录，换电脑时导入即可迁移。</div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>

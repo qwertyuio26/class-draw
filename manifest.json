@@ -1,0 +1,15 @@
+{
+  "name": "上课抽签点名",
+  "short_name": "抽签点名",
+  "description": "课堂随机抽签点名：滚动/转盘两种模式，可导入名单、记录点名历史",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "theme_color": "#0b1220",
+  "background_color": "#0b1220",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
