@@ -3,15 +3,33 @@
 /* ============ 数据层 Store ============ */
 const LS = { classes:'classdraw_classes', state:'classdraw_state', settings:'classdraw_settings', logs:'classdraw_logs' };
 function read(k, d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } }
-function write(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){ console.error(e); } }
+let persistWarned=false;
+function write(k, v){
+  try{ localStorage.setItem(k, JSON.stringify(v)); }
+  catch(e){
+    if(!persistWarned){
+      persistWarned=true;
+      try{ setTimeout(()=>toast('⚠️ 当前浏览器无法保存数据：名单已内置不会丢，但抽签记录仅在本次有效。建议用 Chrome/Edge 打开此文件'), 900); }catch(_){}
+    }
+  }
+}
+function defaultClasses(){
+  if(typeof ROSTER_DATA !== 'undefined' && ROSTER_DATA.length){
+    return ROSTER_DATA.map(x=>({ id:x.id, name:x.name, students:x.students.slice() }));
+  }
+  return [{ id:'c1', name:'一班', students:SAMPLE.slice() }];
+}
 
 const SAMPLE = ['张伟','王芳','李娜','刘洋','陈静','杨帆','赵磊','黄敏','周杰','吴丹','徐强','孙丽','马超','朱婷','胡军','郭雪','林涛','何雨','高翔','罗成','郑爽','梁雪','谢东','韩雪','唐浩','冯颖','董亮','萧然','程晨','曹阳'];
 
 function seed(){
   if(!localStorage.getItem(LS.classes)){
-    write(LS.classes, [{ id:'c1', name:'一班', students:SAMPLE.slice() }]);
+    write(LS.classes, defaultClasses());
   }
-  if(!localStorage.getItem(LS.state)) write(LS.state, { currentId:'c1', drawnMap:{} });
+  const dcls=defaultClasses();
+  const st0=read(LS.state, {});
+  if(!localStorage.getItem(LS.state)) write(LS.state, { currentId:dcls[0].id, drawnMap:{} });
+  else if(dcls.length && !dcls.some(x=>x.id===st0.currentId)){ st0.currentId=dcls[0].id; write(LS.state, st0); }
   if(!localStorage.getItem(LS.settings)) write(LS.settings, { mode:'scroll', noRepeat:true, sound:true, count:1 });
   if(!localStorage.getItem(LS.logs)) write(LS.logs, []);
   const st = read(LS.state, {}), cls = read(LS.classes, []);
