@@ -114,6 +114,15 @@
 </div>
 
 <div id="toast" hidden></div>
+<script src="roster-data.js"></script>
 <script src="app.js"></script>
+<script>
+// 注册 Service Worker：网络环境下离线缓存（file:// 本地打开无需、也不支持）
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+</script>
 </body>
 </html>
